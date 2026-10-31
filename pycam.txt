@@ -4,26 +4,24 @@ import time
 
 picam2 = Picamera2()
 
-# Request RGB888 format from the camera
+# Configure camera
 config = picam2.create_preview_configuration(main={"size": (640, 480), "format": "RGB888"})
 picam2.configure(config)
 picam2.start()
 
-# Warm-up delay to let Auto Exposure settle
 time.sleep(1)
 
-print("Camera running with corrected colors. Press 'q' to exit.")
+print("Camera running with correct colors. Press 'q' to exit.")
 
 try:
     while True:
-        # Capture raw frame (RGB)
-        frame_rgb = picam2.capture_array()
+        # capture_array() returns RGB
+        frame = picam2.capture_array()
 
-        # SWAP CHANNELS: Convert RGB to BGR for OpenCV
-        frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
+        # Swap RGB -> BGR for OpenCV display
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
-        # Display corrected frame
-        cv2.imshow("Adjusted Preview", frame_bgr)
+        cv2.imshow("Camera Preview", frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
