@@ -3,16 +3,22 @@ import cv2
 import time
 
 picam2 = Picamera2()
-config = picam2.create_preview_configuration(main={"size": (640, 480), "format": "RGB888"})
+
+# Configure Picamera2 to output BGR directly for OpenCV
+config = picam2.create_preview_configuration(main={"size": (640, 480), "format": "BGR888"})
 picam2.configure(config)
 picam2.start()
+
+# Give Auto White Balance (AWB) a moment to stabilize
+time.sleep(1)
 
 print("Camera running. Press 'q' on the preview window to exit.")
 
 try:
     while True:
-        frame = picam2.capture_array()
-        frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        # Directly capture BGR array — no cvtColor conversion needed!
+        frame_bgr = picam2.capture_array()
+        
         cv2.imshow("OV5647 Preview", frame_bgr)
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
