@@ -1,0 +1,22 @@
+from picamera2 import Picamera2
+import cv2
+import time
+
+picam2 = Picamera2()
+config = picam2.create_preview_configuration(main={"size": (640, 480), "format": "RGB888"})
+picam2.configure(config)
+picam2.start()
+
+print("Camera running. Press 'q' on the preview window to exit.")
+
+try:
+    while True:
+        frame = picam2.capture_array()
+        frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        cv2.imshow("OV5647 Preview", frame_bgr)
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+finally:
+    picam2.stop()
+    cv2.destroyAllWindows()
